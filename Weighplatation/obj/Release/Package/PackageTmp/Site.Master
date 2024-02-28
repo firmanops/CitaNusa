@@ -1,0 +1,407 @@
+﻿<%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site.master.cs" Inherits="Weighplatation.Site" %>
+<%@ Register Assembly="DevExpress.Web.Bootstrap.v23.1, Version=23.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Namespace="DevExpress.Web.Bootstrap" TagPrefix="dx" %>
+
+<!DOCTYPE html>
+
+<html>
+<head runat="server">
+    <!-- Basic Page Info -->
+    <meta charset="utf-8">
+    <title>MILL MANAGEMENT SYSTEM</title>
+
+    <!-- Site favicon -->
+    <link rel="icon" sizes="180x180" href="vendors/images/apple-touch-icon.png">
+    <link rel="icon" type="image/png" sizes="32x32" href="vendors/images/favicon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="vendors/images/favicon-16x16.png">
+
+    <!-- Mobile Specific Metas -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+    <!-- Google Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- CSS -->
+    <link rel="stylesheet" type="text/css" href="vendors/styles/core.css">
+    <link rel="stylesheet" type="text/css" href="vendors/styles/icon-font.min.css">
+    <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/dataTables.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="src/plugins/datatables/css/responsive.bootstrap4.min.css">
+    <link rel="stylesheet" type="text/css" href="vendors/styles/style.css">
+ 
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-119386393-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag('js', new Date());
+
+        gtag('config', 'UA-119386393-1');
+	</script>   	
+    <asp:ContentPlaceHolder ID="head" runat="server">
+    </asp:ContentPlaceHolder>
+</head>
+<body>
+    <script src="../src/plugins/sweetalert2.all.min.js"></script>
+    <script src="../src/plugins/sweetalert2.min.js"></script>
+    <link rel="stylesheet" href="../src/plugins/sweetalert2.min.css" />
+   <%-- <link href="../src/plugins/bootstrap/bootstrap.min.css" rel="stylesheet" />--%>
+    <script type="text/javascript" src="../src/scripts/jquery.min.js"></script>  
+    <style>
+        .readonly * {
+            background-color: white;
+        }
+    </style>    
+   
+    <script type="text/javascript">
+        function ShowMessage(message, messagetype) {
+            var cssclass;
+            switch (messagetype) {
+                case 'Success':
+                    cssclass = 'alert-success'
+                    break;
+                case 'Error':
+                    cssclass = 'alert-danger'
+                    break;
+                case 'Warning':
+                    cssclass = 'alert-warning'
+                    break;
+                default:
+                    cssclass = 'alert-info'
+            }
+            $('#alert_container').append('<div id="alert_div" style="margin: 0 0.5%; -webkit-box-shadow: 3px 4px 6px #999;" class="alert fade in ' + cssclass + '"><a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a><strong>' + messagetype + '!</strong> <span>' + message + '</span></div>');
+        }
+    </script>  
+    <script type="text/javascript">
+        function warningalert() {
+            swal.fire({
+                title: 'Warning!',
+                icon: 'warning',
+                text: 'Qty can not zero',
+                type: 'warning',
+
+            });
+        }
+        function successalert(msg) {
+            swal.fire({
+                title: 'Succes',
+                icon: 'success',
+                text: msg,
+                type: 'success',
+
+            });
+        }
+        function erroralert(msg) {
+            swal.fire({
+                title: 'Error!',
+                icon: 'error',
+                text: msg,
+                type: 'error',
+
+            });
+        }
+    </script>   
+    <script type="text/javascript">
+        var start;
+        function grid_Init(s, e) {
+            grid.Refresh();
+        }
+        function grid_BeginCallback(s, e) {
+            start = new Date();
+            ClientCommandLabel.SetText(e.command);
+            ClientTimeLabel.SetText("working...");
+        }
+        function grid_EndCallback(s, e) {
+            ClientTimeLabel.SetText(new Date() - start);
+        }
+    </script>
+    <script type="text/javascript" language="javascript">
+        function Validate(s, e) {
+            if (ASPxClientEdit.ValidateGroup('Validation'))
+                ClientCallbackPanelDemo.PerformCallback('');
+        }
+    </script>
+    
+<%--<script type="text/javascript">
+    function SessionExpireAlert(timeout) {
+        var seconds = timeout / 1000;
+        document.getElementsByName("secondsIdle").innerHTML = seconds;
+        document.getElementsByName("seconds").innerHTML = seconds;
+        setInterval(function () {
+            seconds--;
+            document.getElementById("seconds").innerHTML = seconds;
+            document.getElementById("secondsIdle").innerHTML = seconds;
+        }, 1000);
+        setTimeout(function () {
+            //Show Popup before 20 seconds of timeout.
+            $find("mpeTimeout").show();
+        }, timeout - 20 * 1000);
+        setTimeout(function () {
+            window.location = "../Default.aspx";
+        }, timeout);
+    };
+    function ResetSession() {
+        //Redirect to refresh Session.
+        window.location = window.location.href;
+    }
+</script>--%>
+
+    <form id="form1" runat="server">
+        <%--<div class="pre-loader">
+            <div class="pre-loader-box">
+                <div class="loader-logo">
+                    <img src="/vendors/images/logo_kelapasawit.svg" alt="">
+                </div>
+                <div class='loader-progress' id="progress_div">
+                    <div class='bar' id='bar1'></div>
+                </div>
+                <div class='percent' id='percent1'>0%</div>
+                <div class="loading-text">
+                    Loading...
+		<dx:ASPxBinaryImage ID="img1" runat="server" ></dx:ASPxBinaryImage>
+                </div>
+            </div>
+        </div>--%>
+        <div class="header">
+            <div class="header-left bg-primary ">
+               <div class="menu-icon dw dw-menu"></div>
+			<div class="search-toggle-icon dw dw-search2" data-toggle="header_search">
+                 
+			</div>
+			<div class="header-search">
+				<formview>
+                     
+					<div class="form-group mb-0 text-white">
+						<asp:Label  runat="server" ID="lblUser"><%=  Session["UnitNameOW"].ToString()  %></asp:Label>
+                        <%--<asp:Label  runat="server" ID="lblDate"><%# DateTime.Now.ToString("dd-MM-yyyy"); %></asp:Label>--%>	
+					</div>
+				</formview>
+			</div>
+            </div>
+            <div class="header-right bg-primary text-white">
+                
+                <div class="dashboard-setting user-notification">
+                    <div class="row">
+                        <div class="col-md-4">
+                             <div class="form-group mb-0">                        
+						            <asp:Label  runat="server" ID="Label1">User : <%=  Session["UserName"].ToString()  %></asp:Label>
+				            </div>
+                        </div>
+                        <div class="col-md-5">
+                             <div class="form-group mb-0">                        
+                                    <asp:Label  runat="server" ID="Label3">Tanggal : <%= DateTime.Now.ToString("dd-MM-yyyy") %></asp:Label>	
+				            </div>
+                        </div>
+                        <div class="col-md-3">
+                             <div class="dropdown">
+                        <a href="/Default.aspx" class="dropdown-toggle no-arrow" data-toggle="right-sidebar">
+                           <i class="micon dw dw-logout text-white">Logout</i>                            
+                        </a>
+                    </div>
+                        </div>
+                    </div>
+                   
+                    
+                </div>            
+            </div>
+        </div>
+        <div class="left-side-bar">
+            <div class="row">
+                   <div class="col-sm-12 d-flex align-items-stretch align-items-center">
+                        <%--<div class="card card-box w-100 h-25">
+                            <div class="card-body w-100 h-25">   --%>                                                           
+                                <table border="0" cellpadding="0" cellspacing="1" width="100%">                                    
+                                    <tr>
+                                        <td align="center">
+                                            <div align="center">
+                                                <dx:ASPxBinaryImage ID="img1" runat="server"></dx:ASPxBinaryImage>
+                                            </div>                                                                    
+                                        </td>
+                                    </tr>
+                                </table>                                                              
+                            <%--</div>
+                        </div>--%>
+                    </div>
+            </div>
+            <div class="menu-block customscroll">
+                <div class="sidebar-menu">
+                    <ul id="accordion-menu">
+                        <li>
+                            <a href="Dashboard.aspx" class="dropdown-toggle no-arrow">
+                                <span class="micon dw dw-house-1"></span><span class="mtext">Home</span>
+                            </a>
+                        </li>
+                        <li class="dropdown" id="Master" runat="server">                          
+                            <a href="javascript:;" class="dropdown-toggle">
+                                <span class="micon dw dw-browser"></span><span class="mtext"> Master Data</span>
+                            </a>
+                            <ul class="submenu">  
+                                <li class="dropdown">
+                                   <a href="javascript:;" class="dropdown-toggle">
+                                        <span class="dw dw-user-13"></span><span class="mtext"> User Management</span>
+                                    </a>
+                                    <ul class="submenu ">
+                                         <li >
+                                             <a  href="/View/UserGroup.aspx">
+                                                 <span class="fi-torsos-all"></span><span class="mtext"> User Group</span>
+                                             </a>
+                                         </li>
+                                         <li>
+                                             <a  href="/View/GroupMenu.aspx">
+                                                 <span class="fi-page-copy"></span><span class="mtext"> Menu Group</span>
+                                             </a>
+                                         </li>
+                                        <li>
+                                             <a  href="/View/User.aspx">
+                                                 <span class="dw dw-add-user"></span><span class="mtext"> User</span>
+                                             </a>
+                                         </li>
+                                    </ul>
+                                </li>
+                                <li>
+                                    <a href="/View/WBBussinesPartner.aspx">
+                                        <span class="dw dw-money-2"></span><span class="mtext"> Bussiness Partner</span>
+                                    </a>   
+                                </li>
+                                 <li>
+                                    <a href="/View/WBBussinesUnit.aspx">
+                                        <span class="dw dw-briefcase"></span><span class="mtext"> Bussiness Unit</span>
+                                    </a>   
+                                </li>
+                                   <li>
+                                    <a href="/View/WBBlock.aspx">
+                                        <span class="dw dw-package"></span><span class="mtext"> Block</span>
+                                    </a>   
+                                </li> 
+                                
+                                <li>
+                                    <a href="/View/WBVehicle.aspx">
+                                        <span class="dw dw-school-bus"></span><span class="mtext"> Vehicle</span>
+                                    </a>   
+                                </li>
+                                <li>
+                                    <a href="/View/WBProduct.aspx">
+                                        <span class="dw dw-presentation-1"></span><span class="mtext"> Product</span>
+                                    </a>   
+                                </li>
+                                 <li>
+                                    <a href="/View/WBGrading.aspx">
+                                        <span class="dw dw-sofa"></span><span class="mtext"> Grading</span>
+                                    </a>   
+                                </li>                                                                          
+                                <li>
+                                    <a href="/View/Config.aspx">
+                                        <span class="dw dw-settings1"></span><span class="mtext"> Config</span>
+                                    </a>   
+                                </li>
+                            </ul>
+                        </li>
+                        <li class="dropdown" id="Transaction" runat="server">
+                            <a href="javascript:;" class="dropdown-toggle">
+                                <span class="micon dw dw-apartment"></span><span class="mtext">MILL</span>
+                            </a>
+                            <ul class="submenu">
+                                <li class="dropdown">
+                                    <a href="javascript:;" class="dropdown-toggle">
+                                         <span class="micon ion-navicon-round"></span><span class="mtext"> WeighBridge</span>
+                                    </a>
+                                    <ul class="submenu ">
+                                         <li>
+                                            <a href="/View/Contract.aspx">
+                                                <span class="dw dw-notepad-2"></span><span class="mtext"> Contract</span>
+                                            </a>   
+                                        </li>                                
+                                        <li>
+                                            <a href="/View/WBDO.aspx">
+                                                <span class="dw dw-invoice-1"></span><span class="mtext"> DO</span>
+                                            </a>   
+                                        </li>           
+                                         <li>
+                                             <a  href="/View/Receipt.aspx">
+                                                 <span class="micon dw dw-delivery-truck"></span><span class="mtext"> Receipt</span>
+                                             </a>
+                                         </li>
+                                         <li>
+                                             <a href="/View/Despact.aspx">
+                                                 <span class="micon dw dw-delivery-truck-1"></span><span class="mtext"> Despatch</span>
+                                             </a>
+                                         </li>
+                                        <li>
+                                             <a href="/View/ManualReceipt.aspx">
+                                                 <span class="fi-page-export"></span><span class="mtext"> Manual Receipt</span>
+                                             </a>
+                                         </li>
+                                        <li>
+                                             <a href="/View/ManualDespact.aspx">
+                                                 <span class="fi-page-add"></span><span class="mtext"> Manual Despatch</span>
+                                             </a>
+                                         </li>
+                                        <li>
+                                             <a href="/View/OtherReceipts.aspx">
+                                                 <span class="fi-page-doc"></span><span class="mtext"> Other Receipt</span>
+                                             </a>
+                                         </li>
+                                    </ul>
+                                </li>                               
+                            </ul>
+                        </li>                       
+                          <li class="dropdown" id="LReport" runat="server">
+                                    <a href="javascript:;" class="dropdown-toggle">
+                                         <span class="micon dw dw-invoice-1"></span><span class="mtext"> Report</span>
+                                    </a>
+                                    <ul class="submenu ">
+                                <li>
+                                    <a href="/View/ReportRekapReceipt.aspx">
+                                        <span class="dw dw-book2"></span><span class="mtext">  Rekapitulasi Receipt </span>
+                                    </a>   
+                                </li>
+                                <li>
+                                    <a href="/View/ReportViewReceipt.aspx">
+                                        <span class="dw dw-invoice"></span><span class="mtext">  Bunches Receipt Detail</span>
+                                    </a>   
+                                </li>
+                                 <li>
+                                    <a href="/View/ReportRekapDespact.aspx">
+                                        <span class="dw dw-open-book-1"></span><span class="mtext"> Rekapitulasi Despatch</span>
+                                    </a>   
+                                </li>
+                                   <li>
+                                   <a href="/View/ReportViewDespact.aspx">
+                                        <span class="dw dw-notepad-2"></span><span class="mtext">  Despact Detail</span>
+                                    </a>   
+                                </li> 
+                                    </ul>
+                                </li> 
+                        <li>
+                            <a href="/Default.aspx" class="dropdown-toggle no-arrow">
+                                <span class="micon dw dw-logout"></span><span class="mtext">Log Out</span>
+                            </a>
+                        </li>                      
+
+                    </ul>
+                </div>
+            </div>
+        </div>
+        <div class="main-container">
+            <asp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server">
+            </asp:ContentPlaceHolder>
+        </div>
+        
+
+    </form>
+    <!-- js -->
+    <script src="../vendors/scripts/core.js"></script>
+    <script src="../vendors/scripts/script.min.js"></script>
+    <script src="../vendors/scripts/process.js"></script>
+    <script src="../vendors/scripts/layout-settings.js"></script>
+    <script src="../src/plugins/apexcharts/apexcharts.min.js"></script>
+    <script src="../src/plugins/datatables/js/jquery.dataTables.min.js"></script>
+    <script src="../src/plugins/datatables/js/dataTables.bootstrap4.min.js"></script>
+    <script src="../src/plugins/datatables/js/dataTables.responsive.min.js"></script>
+    <script src="../src/plugins/datatables/js/responsive.bootstrap4.min.js"></script>
+    <script src="../vendors/scripts/dashboard3.js"></script>
+    <footer>
+        <div class="footer-wrap pd-20 mb-20 card-box">
+			©Digiard 2022
+		</div>
+    </footer>
+</body>
+    
+</html>

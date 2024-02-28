@@ -1,0 +1,121 @@
+﻿<%@ Page Title="" Language="C#" MasterPageFile="~/Site.Master" AutoEventWireup="true" CodeBehind="WBGrading.aspx.cs" Inherits="Weighplatation.View.WBGrading" %>
+<%@ Register Assembly="DevExpress.Web.Bootstrap.v23.1, Version=23.1.4.0, Culture=neutral, PublicKeyToken=b88d1754d700e49a" Namespace="DevExpress.Web.Bootstrap" TagPrefix="dx" %>
+
+<asp:Content ID="Content1" ContentPlaceHolderID="head" runat="server">
+</asp:Content>
+<asp:Content ID="Content2" ContentPlaceHolderID="ContentPlaceHolder1" runat="server">
+    <div class="pd-20 card-box mb-30">
+        <dx:BootstrapGridView ID="BootstrapGridView1" runat="server" AutoGenerateColumns="False" EnableRowsCache="False" DataSourceID="SqlDataSource1" KeyFieldName="GradingTypeID">
+            <SettingsDataSecurity AllowDelete="True" AllowEdit="True" AllowInsert="True" />
+            <Settings ShowHeaderFilterButton="True" />
+            <SettingsEditing Mode="PopupEditForm">
+                <FormLayoutProperties LayoutType="Vertical">
+                    <Items>
+                        <dx:BootstrapGridViewColumnLayoutItem Caption="Grading Type ID" ColumnName="GradingTypeID" RequiredMarkDisplayMode="Required">
+                        </dx:BootstrapGridViewColumnLayoutItem>
+                        <dx:BootstrapGridViewColumnLayoutItem Caption="Grading Name" ColumnName="GradingName" RequiredMarkDisplayMode="Required">
+                        </dx:BootstrapGridViewColumnLayoutItem>                                               
+                        <dx:BootstrapGridViewColumnLayoutItem Caption="Uom ID" ColumnName="UomID" RequiredMarkDisplayMode="Required">
+                        </dx:BootstrapGridViewColumnLayoutItem>
+                        <dx:BootstrapGridViewColumnLayoutItem Caption="Deductions Value"  ColumnName="DeductionsValue"  RequiredMarkDisplayMode="Required">                            
+                        </dx:BootstrapGridViewColumnLayoutItem>
+                        <dx:BootstrapGridViewColumnLayoutItem Caption="Product Code"  ColumnName="productcode" RequiredMarkDisplayMode="Required">
+                        </dx:BootstrapGridViewColumnLayoutItem>
+                         <dx:BootstrapGridViewColumnLayoutItem Caption="WB Type"  ColumnName="wbtype" RequiredMarkDisplayMode="Required">
+                        </dx:BootstrapGridViewColumnLayoutItem>
+                        <dx:BootstrapGridViewColumnLayoutItem Caption="Active"  ColumnName="status" RequiredMarkDisplayMode="Required">
+                        </dx:BootstrapGridViewColumnLayoutItem>
+                            <dx:BootstrapEditModeCommandLayoutItem>
+                                <%--Buat Button --%>
+                        </dx:BootstrapEditModeCommandLayoutItem>
+                    </Items>
+                </FormLayoutProperties>
+            </SettingsEditing>                           
+            <SettingsCommandButton>
+                <NewButton IconCssClass="fa fa-plus-circle" />
+                <UpdateButton IconCssClass="fa fa-save" Text="Save"/>
+                <CancelButton IconCssClass="fa fa-close"/>
+                <EditButton IconCssClass="fa fa-edit" />
+                <DeleteButton IconCssClass="fa fa-trash-o" />
+            </SettingsCommandButton>      
+             <SettingsPopup>  
+             
+               <EditForm>  
+                   <SettingsAdaptivity MaxWidth="900" />                
+               </EditForm>            
+            </SettingsPopup>  
+            <Columns>
+                 <dx:BootstrapGridViewCommandColumn ShowDeleteButton="False" ShowEditButton="True" ShowNewButtonInHeader="True" VisibleIndex="0"></dx:BootstrapGridViewCommandColumn>
+                <dx:BootstrapGridViewTextColumn FieldName="GradingTypeID"  VisibleIndex="1">
+                </dx:BootstrapGridViewTextColumn>
+                <dx:BootstrapGridViewTextColumn FieldName="GradingName"  VisibleIndex="2">
+                </dx:BootstrapGridViewTextColumn>
+                <dx:BootstrapGridViewComboBoxColumn Caption="UOM" FieldName="UomID"  Visible="true" VisibleIndex="3">
+                    <PropertiesComboBox  EnableSynchronization="False" IncrementalFilteringMode="StartsWith"           
+                        DataSourceID="SqlDataSourceUOM" TextField="UomName" ValueField="UomID">                    
+                    </PropertiesComboBox>                                                         
+                </dx:BootstrapGridViewComboBoxColumn>  
+                <dx:BootstrapGridViewTextColumn FieldName="DeductionsValue" VisibleIndex="4">
+                    <PropertiesTextEdit DisplayFormatString="{0,15:#,##0.00 ;(#,##0.00);-   }" ></PropertiesTextEdit>
+                </dx:BootstrapGridViewTextColumn>
+                <dx:BootstrapGridViewComboBoxColumn Caption="Product" FieldName="productcode"  Visible="true" VisibleIndex="5">
+                    <PropertiesComboBox  EnableSynchronization="False" IncrementalFilteringMode="StartsWith"           
+                        DataSourceID="SqlDataSourceProduct" TextField="ProductName" ValueField="ProductCode">                    
+                    </PropertiesComboBox>                                                         
+                </dx:BootstrapGridViewComboBoxColumn>                 
+                  <dx:BootstrapGridViewComboBoxColumn Caption="WB Type" FieldName="wbtype"  Visible="true" VisibleIndex="6">
+                    <PropertiesComboBox  EnableSynchronization="False" IncrementalFilteringMode="StartsWith"           
+                       TextField="wbtype" ValueField="wbtype">
+                        <Items>
+                            <dx:BootstrapListEditItem Value="" Text=""></dx:BootstrapListEditItem>
+                            <dx:BootstrapListEditItem Value="1" Text="Receipt"></dx:BootstrapListEditItem>
+                            <dx:BootstrapListEditItem Value="2" Text="Despact"></dx:BootstrapListEditItem>
+                        </Items>
+                    </PropertiesComboBox>                                                         
+                </dx:BootstrapGridViewComboBoxColumn>        
+                <dx:BootstrapGridViewCheckColumn FieldName="status" VisibleIndex="7">
+                </dx:BootstrapGridViewCheckColumn>
+            </Columns>
+            <SettingsSearchPanel ShowClearButton="True" Visible="True" />
+            <SettingsPager NumericButtonCount="4">
+                <PageSizeItemSettings Visible="true" Items="5,10" />
+            </SettingsPager>
+        </dx:BootstrapGridView>
+        <asp:SqlDataSource ID="SqlDataSource1" runat="server" ConnectionString="<%$ ConnectionStrings:ILGDbConn %>"
+            DeleteCommand="UPDATE public.&quot;WBGRADINGTYPE&quot;  SET &quot;status&quot; = 'false' where &quot;GradingTypeID&quot; = @GradingTypeID"
+            InsertCommand="INSERT INTO public.&quot;WBGRADINGTYPE&quot; (&quot;GradingTypeID&quot;,&quot;GradingName&quot; , &quot;UomID&quot;, &quot;DeductionsValue&quot;,&quot;productcode&quot;,&quot;status&quot;,&quot;wbtype&quot; ) VALUES
+                            ( @GradingTypeID,@GradingName, @UomID,@DeductionsValue,@productcode,@status,@wbtype )" ProviderName="<%$ ConnectionStrings:ILGDbConn.ProviderName %>"
+            SelectCommand="SELECT * FROM public.&quot;WBGRADINGTYPE&quot; where &quot;status&quot;=true"
+            UpdateCommand="UPDATE public.&quot;WBGRADINGTYPE&quot; SET &quot;GradingName&quot; = @GradingName, &quot;UomID&quot;= @UomID, &quot;DeductionsValue&quot;= @DeductionsValue ,&quot;productcode&quot;= @productcode,&quot;status&quot; =@status ,&quot;wbtype&quot; =@wbtype where &quot;GradingTypeID&quot; = @GradingTypeID">
+            <DeleteParameters>
+                <asp:Parameter Name="GradingTypeID" />
+            </DeleteParameters>
+            <InsertParameters>
+                <asp:Parameter Name="GradingTypeID" />
+                <asp:Parameter Name="GradingName" />
+                <asp:Parameter Name="UomID" />
+                <asp:Parameter Name="DeductionsValue" />
+                <asp:Parameter Name="productcode" />
+                <asp:Parameter Name="status" />  
+                <asp:Parameter Name="wbtype" />  
+            </InsertParameters>
+            <UpdateParameters>
+                <asp:Parameter Name="GradingTypeID" />
+                <asp:Parameter Name="GradingName" />
+                <asp:Parameter Name="UomID" />
+                <asp:Parameter Name="DeductionsValue" />
+                <asp:Parameter Name="productcode" />
+                <asp:Parameter Name="status" />
+                <asp:Parameter Name="wbtype" />  
+            </UpdateParameters>
+        </asp:SqlDataSource>
+        <asp:SqlDataSource ID="SqlDataSourceUOM" runat="server" ConnectionString="<%$ ConnectionStrings:ILGDbConn %>" 
+            ProviderName="<%$ ConnectionStrings:ILGDbConn.ProviderName %>" 
+            SelectCommand="select &quot;UomID&quot; ,&quot;UomName&quot;  from public.&quot;WBUom&quot;">
+        </asp:SqlDataSource>
+        <asp:SqlDataSource ID="SqlDataSourceProduct" runat="server" ConnectionString="<%$ ConnectionStrings:ILGDbConn %>" 
+            ProviderName="<%$ ConnectionStrings:ILGDbConn.ProviderName %>" 
+            SelectCommand="select &quot;ProductCode&quot; ,&quot;ProductName&quot;  from public.&quot;WBPRODUCT&quot;">
+        </asp:SqlDataSource>
+    </div>
+</asp:Content>
